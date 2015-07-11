@@ -1,6 +1,7 @@
 import sys
 from random import choice
-
+import os
+import twitter
 
 class MarkovMachine(object):
 
@@ -62,3 +63,32 @@ if __name__ == "__main__":
     generator = MarkovMachine()
     generator.read_files(filenames)
     print generator.make_text()
+    output = generator.make_text()
+
+
+# Use Python os.environ to get at environmental variables
+#
+# Note: you must run `source secrets.sh` before running this file
+# to make sure these environmental variables are set.
+
+api = twitter.Api(
+    consumer_key=os.environ['TWITTER_CONSUMER_KEY'],
+    consumer_secret=os.environ['TWITTER_CONSUMER_SECRET'],
+    access_token_key=os.environ['TWITTER_ACCESS_TOKEN_KEY'],
+    access_token_secret=os.environ['TWITTER_ACCESS_TOKEN_SECRET'])
+
+# This will print info about credentials to make sure they're correct
+print api.VerifyCredentials()
+
+# Send a tweet
+# status = api.PostUpdate('tweet body here')
+# print status.text
+
+
+while True:
+    status = api.PostUpdate(output) # post a tweet
+    print status.text # print what was posted
+    tweet_again = raw_input("Enter to tweet again [q to quit] >")
+    if tweet_again == "q":
+        break
+
